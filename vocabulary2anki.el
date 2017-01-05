@@ -57,4 +57,4 @@ BUFFER参数指定了从哪个buffer中读取"
     (with-temp-file anki-file
       (mapc #'v2a-write-vocabulary vocabularies))))
 
-(vocabulary2anki "/cygdrive/c/默认生词本.txt" "我的生词本")
+;; (vocabulary2anki "/cygdrive/c/默认生词本.txt" "我的生词本")
