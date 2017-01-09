@@ -68,12 +68,15 @@ BUFFER参数指定了从哪个buffer中读取"
 ;; (vocabulary2anki "/cygdrive/c/默认生词本.txt" "我的生词本")
 
 (when command-line-args-left
-  (pop command-line-args-left)
-  (let ((vocabulary-file (pop command-line-args-left))
-        (vocabulary))
-    (with-temp-buffer
-      (insert-file-contents vocabulary-file)
-      (goto-char (point-min))
-      (while (setq vocabulary (ignore-errors (v2a-read-vocabulary)))
-        (v2a-print-vocabulary vocabulary))))
+  (pop command-line-args-left)          ;去掉最前面的"--"
+  (if (= (length command-line-args-left) 1)
+      (let ((vocabulary-file (pop command-line-args-left))
+            (vocabulary))
+        (with-temp-buffer
+          (insert-file-contents vocabulary-file)
+          (goto-char (point-min))
+          (while (setq vocabulary (ignore-errors (v2a-read-vocabulary)))
+            (v2a-print-vocabulary vocabulary))))
+    (let ((script-path (nth 2 command-line-args)))
+      (message "Usage: %s 金山词霸生词本的路径\n\n该脚本会将结果输出到stdout,你可以将结果重定向到目标文件中" (file-name-nondirectory script-path))))
   (setq command-line-args-left nil))
