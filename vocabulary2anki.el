@@ -1,5 +1,6 @@
 #!/bin/sh
 ":"; exec emacs --quick --script "$0" -- "$@" # -*- mode: emacs-lisp; lexical-binding: t; -*-
+(require 'subr-x)
 
 (defun v2a-read-vocabulary (&optional pos buffer)
   "读入一个生词,返回一个(单词 释义 音标)的list
@@ -67,6 +68,7 @@ BUFFER参数指定了从哪个buffer中读取"
 ;; (vocabulary2anki "/cygdrive/c/默认生词本.txt" "我的生词本")
 
 (when command-line-args-left
+  (pop command-line-args-left)
   (let ((vocabulary-file (pop command-line-args-left))
         (vocabulary))
     (with-temp-buffer
