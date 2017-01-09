@@ -1,3 +1,6 @@
+#!/bin/sh
+":"; exec emacs --quick --script "$0" -- "$@" # -*- mode: emacs-lisp; lexical-binding: t; -*-
+
 (defun v2a-read-vocabulary (&optional pos buffer)
   "读入一个生词,返回一个(单词 释义 音标)的list
 
@@ -40,6 +43,10 @@ BUFFER参数指定了从哪个buffer中读取"
   (v2a--read-content-between "&" "@" pos buffer))
 ;; (v2a-read-phonetic nil "默认生词本.txt")
 
+(defun v2a-print-vocabulary (vocabulary &optional seperator)
+  (let ((seperator (or seperator "\t")))
+    (princ (concat (funcall #'string-join vocabulary seperator) "\n"))))
+
 (defun v2a-write-vocabulary (vocabulary &optional seperator)
   (let ((seperator (or seperator "\t")))
     (insert (funcall #'string-join vocabulary seperator) "\n")))
@@ -58,3 +65,13 @@ BUFFER参数指定了从哪个buffer中读取"
       (mapc #'v2a-write-vocabulary vocabularies))))
 
 ;; (vocabulary2anki "/cygdrive/c/默认生词本.txt" "我的生词本")
+
+(when command-line-args-left
+  (let ((vocabulary-file (pop command-line-args-left))
+        (vocabulary))
+    (with-temp-buffer
+      (insert-file-contents vocabulary-file)
+      (goto-char (point-min))
+      (while (setq vocabulary (ignore-errors (v2a-read-vocabulary)))
+        (v2a-print-vocabulary vocabulary))))
+  (setq command-line-args-left nil))
